@@ -3,7 +3,9 @@ package com.example.apiversiondemo.controller;
 import com.example.apiversiondemo.model.Name;
 import com.example.apiversiondemo.model.StudentV1;
 import com.example.apiversiondemo.model.StudentV2;
+import com.example.apiversiondemo.util.SecurityUtil;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -42,5 +44,19 @@ public class StudentController {
     @GetMapping(value = "/student/header", headers = "X-API-VERSION=2")
     public StudentV2 headerV2() {
         return new StudentV2(new Name("Bob", "Charlie"));
+    }
+
+    @GetMapping("/student/cleanTest/{name}")
+    public StudentV2 testEsapi(@PathVariable String name) {
+
+        StudentV2 studentV2 = new StudentV2(new Name("Bob", "Charlie"));
+
+        String cleanString = SecurityUtil.cleanString(name);
+
+        if (cleanString.equalsIgnoreCase("Bob")) {
+            return studentV2;
+        }
+
+        return new StudentV2();
     }
 }
